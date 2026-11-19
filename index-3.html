@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NN SUNWIN VIP</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101827;color:#fff;font-family:Arial,sans-serif;padding:18px}
+.wrap{max-width:520px;margin:25px auto;background:#1b2940;border:1px solid #344766;border-radius:18px;padding:20px;box-shadow:0 12px 35px #0006}
+h1{text-align:center;color:#ffd45a;margin:5px 0 8px}.sub{text-align:center;color:#b9c7dc;font-size:13px;margin-bottom:22px}
+label{display:block;margin:12px 0 6px;color:#dbe6f7}input{width:100%;padding:13px;border-radius:10px;border:1px solid #526783;background:#101827;color:#fff;font-size:18px}
+button{width:100%;padding:14px;border:0;border-radius:10px;background:#f5bd35;color:#171717;font-weight:bold;font-size:16px;margin-top:16px}
+.result{margin-top:18px;padding:18px;border-radius:12px;background:#101827;text-align:center}.big{font-size:28px;font-weight:bold;color:#ffd45a}.muted{color:#b9c7dc;font-size:13px}
+ul{padding-left:20px}li{padding:6px 0;border-bottom:1px solid #344766}
+</style>
+</head>
+<body><main class="wrap">
+<h1>NN SUNWIN VIP</h1><div class="sub">Công cụ ghi nhận và thống kê Tài / Xỉu</div>
+<label>Phiên (tùy chọn)</label><input id="session" placeholder="Ví dụ: 123456">
+<label>Xúc xắc 1 (1–6)</label><input id="d1" type="number" min="1" max="6" placeholder="Nhập số">
+<label>Xúc xắc 2 (1–6)</label><input id="d2" type="number" min="1" max="6" placeholder="Nhập số">
+<label>Xúc xắc 3 (1–6)</label><input id="d3" type="number" min="1" max="6" placeholder="Nhập số">
+<button onclick="addResult()">GHI NHẬN KẾT QUẢ</button>
+<section class="result"><div class="muted">Kết quả vừa nhập</div><div class="big" id="out">Chưa có dữ liệu</div><div id="detail" class="muted"></div></section>
+<h3>Lịch sử gần đây</h3><ul id="history"><li>Chưa có kết quả nào.</li></ul>
+<div class="muted">Lưu ý: Công cụ chỉ thống kê kết quả bạn nhập, không kết nối hay đọc tài khoản Sunwin và không dự đoán chắc chắn kết quả ngẫu nhiên.</div>
+</main>
+<script>
+const KEY='nn_sunwin_history';
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}
+function render(){let h=load();document.getElementById('history').innerHTML=h.length?h.slice(0,10).map(x=>`<li>Phiên ${escapeHtml(x.session||'—')}: ${x.dice.join(' - ')} = <b>${x.total} · ${x.side}</b></li>`).join(''):'<li>Chưa có kết quả nào.</li>'}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addResult(){let dice=['d1','d2','d3'].map(id=>Number(document.getElementById(id).value));if(dice.some(n=>!Number.isInteger(n)||n<1||n>6)){alert('Bạn nhập đủ 3 xúc xắc, mỗi số từ 1 đến 6 nhé.');return}let total=dice.reduce((a,b)=>a+b,0),side=total>=11&&total<=17?'TÀI':total>=4&&total<=10?'XỈU':'BỘ BA';let item={session:document.getElementById('session').value.trim(),dice,total,side,time:Date.now()};let h=load();h.unshift(item);localStorage.setItem(KEY,JSON.stringify(h.slice(0,100)));document.getElementById('out').textContent=side;document.getElementById('detail').textContent=`${dice.join(' + ')} = ${total}`;render()}
+render();
+</script></body></html>
